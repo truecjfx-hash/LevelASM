@@ -97,15 +97,15 @@ unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset
 				break;//XOR param1
 			}
 			case 0x0E:{
-				if (ProgramPointer+1 < 8) {
-				    REGISTER[0] = REGISTER[ProgramPointer+1];
+				if (ProgramName[ProgramPointer+1] < 8) {
+				    REGISTER[0] = REGISTER[ProgramName[ProgramPointer+1]];
 				}
 				ProgramPointer+=2;
 				break;//LDR param1
 			}
 			case 0x0F:{
-				if (ProgramPointer+1 < 8) {
-				    REGISTER[ProgramPointer+1] = REGISTER[0];
+				if (ProgramName[ProgramPointer+1] < 8) {
+				    REGISTER[ProgramName[ProgramPointer+1]] = REGISTER[0];
 				}
 				ProgramPointer+=2;
 				break;//RDR param1
