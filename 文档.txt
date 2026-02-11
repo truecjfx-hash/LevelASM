@@ -1,0 +1,120 @@
+寄存器（毎个皆一字節）：
+  R0  ,  R1  ,  R2  ,  R3  ,  R4  ,  R5  ,  R6  ,  R7
+累加器  X坐標 Y坐標 磚塊類型 寬度   高度    値   游戲寄存器（256字節）
+
+可操作地址：
+unsigned char CJFX_Global_Map[256][256];
+unsigned char gameReg[256];
+
+指令集：
+
+0x00:HALT
+終止。
+
+0x01:NOP
+空白。
+
+（光標類算子）
+0x02:LDX param1
+加載至R1。
+存儲X坐標。
+
+0x03:LDY param1
+加載至R2。
+存儲y坐標。
+
+0x04:LDT param1
+加載至R3。
+存儲磚塊類型。
+
+0x05:LDL param1
+存儲寬度（length）。
+
+0x06:LDH param1
+存儲高度（height）。
+
+（執行類算子）
+0x07:DRAW param1
+若為0b00：
+繪製x=R1，y=R2，Brick=R3的磚塊。
+若為0b01：
+批量繪製x=R1，y=R2，Brick=R3，length=R4的磚塊。
+若為0b10：
+批量繪製x=R1，y=R2，Brick=R3，height=R5的磚塊。
+若為0b11：
+批量繪製x=R1，y=R2，Brick=R3，length=R4，height=R5的磚塊。
+
+0x08:READ param1 param2
+讀取x=param1，y=param2的磚塊到R0。
+
+（計算類算子）
+0x09:SET param1
+賦値R0為Parameter1。
+
+0x0A:ADD param1
+将R0增加Parameter1。
+
+0x0B:OR param1
+将R0與Parameter1進行或運算。
+
+0x0C:AND param1
+将R0與Parameter1進行與運算。
+
+0x0D:XOR param1
+将R0與Parameter1進行或運算。
+
+0x0E:LDR param1
+将Parameter1指定的寄存器的値加載至R0。
+
+0x0F:RDR param1
+将R0的値加載至Parameter1指定的寄存器。
+
+0x10:SUB param1
+R0減少Parameter1。
+
+0x11:SHL param1
+R0左移Parameter1。
+
+0x12:SHR param1
+R0右移Parameter1。
+
+0x13:INC
+R0自增1。
+
+0x14:DEC
+R0自減1。
+
+（制御類算子）
+0x15:JMPF param1
+向前無條件跳轉Parameter1字節。
+
+0x16:JMPB param1
+向后無條件跳轉Parameter1字節。
+
+0x17:JRF param1 param2
+当Parameter1等於R0時向前跳轉Parameter2字節。
+
+0x18:JRB param1 param2
+当Parameter1等於R0時向后跳轉Parameter2字節。
+
+（未使用）
+0x19:
+
+0x1A:
+
+0x1B:
+
+（寄存器類算子）
+0x1C:GETR
+将R7對應地址的値寫入R6。
+
+0x1D:LDI param1
+将Parameter1的値寫入R6，
+也就是将要寫入寄存器的値。
+
+0x1E:SETR param1
+将Parameter1的値寫入R7，
+也就是将要寫入的寄存器地址。
+
+0x1F:APPLY
+應用這個1D和1E的値，也就是将R6寫入寄存器中位於R7的地方。
