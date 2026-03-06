@@ -183,7 +183,7 @@ unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset
 				break;//LJMP
 			}
 			case 0x1A:{
-				if(Stack_Pointer >= 0){
+				if(Stack_Pointer >= 1){
 					ProgramPointer = STACK[Stack_Pointer];
 					Stack_Pointer -= 1;					
 				}else{
