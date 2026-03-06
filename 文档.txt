@@ -97,12 +97,13 @@ R0自減1。
 0x18:JRB param1 param2
 当Parameter1等於R0時向后跳轉Parameter2字節。
 
-（未使用）
-0x19:
+0x19:LJMP (unsigned int)param1
+絶対跳転到任意地址。
 
-0x1A:
+0x1A:RET
+返回。
 
-0x1B:
+0x1B:（未使用）
 
 （寄存器類算子）
 0x1C:GETR
