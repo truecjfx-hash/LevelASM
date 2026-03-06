@@ -1,15 +1,21 @@
 unsigned char CJFX_Global_Map[256][256];
 unsigned char gameReg[256];
+#define STACK_MAX 32
+// MAXIMUM is 255.
 unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset){
+	// Actually a MAP LOADER
 	int ProgramPointer=Offset;
 	unsigned char REGISTER[8];
 	//寄存器（毎个皆一字節）：
 	//  R0  ,  R1  ,  R2  ,  R3  ,  R4  ,  R5  ,  R6  ,  R7
 	//累加器  X坐標 Y坐標 磚塊類型 寬度   高度    値   游戲寄存器（256字節）
+	unsigned int STACK[STACK_MAX]={0};
+	unsigned char Stack_Pointer=0;
+	
 	while(1){
 		switch (ProgramName[ProgramPointer]) {
 			case 0x01:{
-				// 什麼也不做。
+				// 什么也不做。
 				ProgramPointer+=1;
 				break;
 			}
@@ -151,7 +157,7 @@ unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset
                 if(REGISTER[0] == compare_value) {
                     ProgramPointer += jump;
                 } else {
-                    ProgramPointer += 3; // 跳過指令和両个参数
+                    ProgramPointer += 3; // 跳过指令和两个参数
                 }
                 break;
             }
@@ -162,12 +168,29 @@ unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset
                 if(REGISTER[0] == compare_value) {
                     ProgramPointer -= jump;
                 } else {
-                    ProgramPointer += 3; // 跳過指令和両个参数
+                    ProgramPointer += 3; // 跳过指令和两个参数
                 }
                 break;
             }   
-			case 0x19://Unused
-			case 0x1A://Unused
+			case 0x19:{
+				if(Stack_Pointer <= STACK_MAX-1){
+					STACK[Stack_Pointer] = ProgramPointer + 5;
+					Stack_Pointer += 1;
+					ProgramPointer = *(unsigned int*)(ProgramName + ProgramPointer + 1);
+				}else{
+					ProgramPointer += 5;
+				}
+				break;//LJMP
+			}
+			case 0x1A:{
+				if(Stack_Pointer >= 0){
+					ProgramPointer = STACK[Stack_Pointer];
+					Stack_Pointer -= 1;					
+				}else{
+					ProgramPointer += 1;
+				}
+				break;//RET
+			}
 			case 0x1B:{
 				ProgramPointer+=1;
 				break;//Unused
@@ -194,7 +217,7 @@ unsigned char CJFX_VMexec(const unsigned char* ProgramName,unsigned short Offset
 			}
 			default:
 				return ProgramName[ProgramPointer];
-				break;// 0x00等其他未定義指令返回操作碼，0x00是halt，可以返回値：0，即正常。
+				break;// 0x00等其他未定义指令返回操作码，0x00是halt，可以返回值：0，即正常。
 		}
 	}
 }
